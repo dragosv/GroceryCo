@@ -16,17 +16,12 @@ namespace GroceryCo.Library
             
             foreach (var promotion in promotions)
             {
-                var productGroups = promotion.ApplyTo(order);
+                var promotionDiscounts = promotion.ApplyTo(order);
 
-                if (productGroups.Count > 0)
-                {
-                    double discountValue = promotion.Discount(order);
-                    
-                    discounts.Add(new Discount() { Promotion = promotion, ProductGroups = productGroups, Value = discountValue });
-                }
+                discounts.AddRange(promotionDiscounts);
             }
             
-            return new Invoice(order.Products, discounts);
+            return new Invoice(order.Items, discounts);
         }
     }
 }

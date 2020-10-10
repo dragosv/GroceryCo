@@ -10,58 +10,54 @@ namespace GroceryCo.Library
         
         public int Percent { get; set; }
 
-        public IList<ProductGroup> ApplyTo(Order order)
+        public override bool Equals(object? obj)
         {
-            var count = order.Products.Count(x => x.Categories.Contains(Category));
-
-            var groups = count / 2;
-
-            if (groups == 0)
+            if (obj is AdditionalPromotion additionalPromotion)
             {
-                return new List<ProductGroup>();
+                return Equals(additionalPromotion);
             }
-
-            var products = order.Products
-                .Where(x => x.Categories.Contains(Category))
-                .OrderByDescending(x => x.Price)
-                .Take(groups * 2)
-                .ToList();
-
-            return products.GroupBy(x => x)
-                .Select(group => new ProductGroup(group.Key, group.Count()))
-                .ToList();
+            
+            return base.Equals(obj);
         }
 
-        public double Discount(Order order)
+        public override int GetHashCode()
         {
-            var count = order.Products.Count(x => x.Categories.Contains(Category));
+            return HashCode.Combine(Category, Percent);
+        }
+
+        public IList<Discount> ApplyTo(Order order)
+        {
+            var count = order.Items.Count(x => x.Product.Categories.Contains(Category));
 
             var groups = count / 2;
 
             if (groups == 0)
             {
-                return 0;
+                return new List<Discount>();
             }
 
-            var products = order.Products
-                .Where(x => x.Categories.Contains(Category))
-                .OrderByDescending(x => x.Price)
+            var items = order.Items
+                .Where(x => x.Product.Categories.Contains(Category))
+                .OrderByDescending(x => x.Product.Price)
                 .Take(groups * 2)
                 .ToList();
 
-            var discountedProducts = new List<Product>();
+            var discounts = new List<Discount>();
             
-            for (int i = 0; i < products.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 if (i % 2 == 1)
                 {
-                    discountedProducts.Add(products[i]);
+                    discounts.Add(new Discount { Promotion = this, Item = items[i], Value = Percent * items[i].Product.Price / 100 });
                 }
             }
-            
-            var totalPrices = discountedProducts.Sum(x => x.Price);
 
-            return totalPrices * Percent / 100;
+            return discounts;
+        }
+
+        private bool Equals(AdditionalPromotion other)
+        {
+            return Category == other.Category && Percent == other.Percent;
         }
     }
 }

@@ -17,93 +17,33 @@ namespace GroceryCo.Tests
         [Fact]
         public void OnSalePromotion_WithProduct_ShouldApplyOnOrder()
         {
-            var order = new Order(new []{ firstProduct, secondProduct });
+            var order = new Order(new []{ new Item(firstProduct), new Item(secondProduct) });
             
             var onSalePromotion = new OnSalePromotion { Product = firstProduct, SalePrice = 1.49};
 
-            var productGroups = onSalePromotion.ApplyTo(order);
+            var discounts = onSalePromotion.ApplyTo(order);
             
-            Assert.Equal(1, productGroups.Count);
-            Assert.Equal(firstProduct, productGroups[0].Product);
-            Assert.Equal(1, productGroups[0].Quantity);
+            Assert.Equal(1, discounts.Count);
+            Assert.Equal(order.Items[0], discounts[0].Item);
+            Assert.Equal(firstProduct.Price - 1.49, discounts[0].Value);
         }
         
         [Fact]
         public void OnSalePromotion_WithoutProduct_ShouldNotApplyOnOrder()
         {
-            var order = new Order(new []{ secondProduct });
+            var order = new Order(new []{ new Item(secondProduct) });
             
             var onSalePromotion = new OnSalePromotion { Product = firstProduct, SalePrice = 1.49};
 
-            var productGroups = onSalePromotion.ApplyTo(order);
+            var discounts = onSalePromotion.ApplyTo(order);
             
-            Assert.Equal(0, productGroups.Count);
-        }
-        
-        [Fact]
-        public void OnSalePromotion_ShouldDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct });
-            
-            var onSalePromotion = new OnSalePromotion { Product = firstProduct, SalePrice = 1.49};
-
-            Assert.Equal(0.5, onSalePromotion.Discount(order));
-        }
-
-        [Fact]
-        public void OnSalePromotion_MultipleProducts_ShouldDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct, firstProduct });
-            
-            var onSalePromotion = new OnSalePromotion { Product = firstProduct, SalePrice = 1.49};
-
-            Assert.Equal(1, onSalePromotion.Discount(order));
-        }
-
-        [Fact]
-        public void OnSalePromotion_NoProduct_ShouldZeroDiscount()
-        {
-            var order = new Order(new []{ secondProduct });
-            
-            var onSalePromotion = new OnSalePromotion { Product = firstProduct, SalePrice = 1.49};
-
-            Assert.Equal(0, onSalePromotion.Discount(order));
-        }
-        
-        [Fact]
-        public void GroupPromotion_BelowQuantity_ShouldZeroDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct });
-            
-            var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
-
-            Assert.Equal(0, groupPromotion.Discount(order));
-        }
-
-        [Fact]
-        public void GroupPromotion_MultipleProducts_ShouldDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct, firstProduct, firstProduct, firstProduct });
-            
-            var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
-
-            Assert.Equal(1.96, groupPromotion.Discount(order));
-        }
-
-        [Fact]
-        public void GroupPromotion_NoProduct_ShouldZeroDiscount()
-        {
-            var order = new Order(new []{ secondProduct });
-            
-            var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
-
-            Assert.Equal(0, groupPromotion.Discount(order));
+            Assert.Equal(0, discounts.Count);
         }
         
         [Fact]
         public void GroupPromotion_BelowQuantity_ShouldNotApplyNo()
         {
-            var order = new Order(new []{ firstProduct, secondProduct });
+            var order = new Order(new []{ new Item(firstProduct), new Item(secondProduct) });
             
             var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
 
@@ -113,7 +53,7 @@ namespace GroceryCo.Tests
         [Fact]
         public void GroupPromotion_NoProduct_ShouldNotApplyNo()
         {
-            var order = new Order(new []{ secondProduct });
+            var order = new Order(new []{ new Item(secondProduct) });
             
             var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
 
@@ -123,51 +63,28 @@ namespace GroceryCo.Tests
         [Fact]
         public void GroupPromotion_MultipleProducts_ShouldApply()
         {
-            var order = new Order(new []{ firstProduct, secondProduct, firstProduct, firstProduct, firstProduct });
+            var order = new Order(new []{ new Item(firstProduct), new Item(secondProduct), new Item(firstProduct), new Item(firstProduct), new Item(firstProduct) });
             
             var groupPromotion = new GroupPromotion { Product = firstProduct, Quantity =  2, Price = 3};
 
-            var productGroups = groupPromotion.ApplyTo(order);
+            var discounts = groupPromotion.ApplyTo(order);
+            var discountValue = firstProduct.Price - 1.5;
             
-            Assert.Equal(1, productGroups.Count);
-            Assert.Equal(firstProduct, productGroups[0].Product);
-            Assert.Equal(4, productGroups[0].Quantity);            
+            Assert.Equal(4, discounts.Count);
+            Assert.Equal(order.Items[0], discounts[0].Item);
+            Assert.Equal(discountValue, discounts[0].Value);
+            Assert.Equal(order.Items[2], discounts[1].Item);
+            Assert.Equal(discountValue, discounts[1].Value); 
+            Assert.Equal(order.Items[3], discounts[2].Item);
+            Assert.Equal(discountValue, discounts[2].Value); 
+            Assert.Equal(order.Items[4], discounts[3].Item);
+            Assert.Equal(discountValue, discounts[3].Value); 
         }
-
-        [Fact]
-        public void AdditionalPromotion_NoMultiple_ShouldNotDiscount()
-        {
-            var order = new Order(new []{ firstProduct });
-            
-            var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
-
-            Assert.Equal(0, additionalPromotion.Discount(order));
-        }
-        
-        [Fact]
-        public void AdditionalPromotion_AdditionalProducts_ShouldDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct });
-            
-            var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
-
-            Assert.Equal(secondProduct.Price / 2, additionalPromotion.Discount(order));
-        }
-        
-        [Fact]
-        public void AdditionalPromotion_MultipleProducts_ShouldDiscount()
-        {
-            var order = new Order(new []{ firstProduct, secondProduct, firstProduct, secondProduct, thirdProduct });
-            
-            var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
-
-            Assert.Equal((firstProduct.Price + secondProduct.Price) / 2, additionalPromotion.Discount(order));
-        }
-        
+     
         [Fact]
         public void AdditionalPromotion_NoMultiple_ShouldNotApply()
         {
-            var order = new Order(new []{ firstProduct });
+            var order = new Order(new []{ new Item(firstProduct) });
             
             var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
 
@@ -177,33 +94,31 @@ namespace GroceryCo.Tests
         [Fact]
         public void AdditionalPromotion_AdditionalProducts_ShouldApply()
         {
-            var order = new Order(new []{ firstProduct, secondProduct });
+            var order = new Order(new []{ new Item(firstProduct), new Item(secondProduct) });
             
             var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
 
-            var productGroups = additionalPromotion.ApplyTo(order);
+            var discounts = additionalPromotion.ApplyTo(order);
             
-            Assert.Equal(2, productGroups.Count);
-            Assert.Equal(firstProduct, productGroups[0].Product);
-            Assert.Equal(1, productGroups[0].Quantity);
-            Assert.Equal(secondProduct, productGroups[1].Product);
-            Assert.Equal(1, productGroups[1].Quantity);            
+            Assert.Equal(1, discounts.Count);
+            Assert.Equal(order.Items[1], discounts[0].Item);
+            Assert.Equal(secondProduct.Price / 2, discounts[0].Value);
         }
         
         [Fact]
         public void AdditionalPromotion_MultipleProducts_ShouldApply()
         {
-            var order = new Order(new []{ firstProduct, secondProduct, firstProduct, secondProduct, thirdProduct });
+            var order = new Order(new []{ new Item(firstProduct), new Item(secondProduct), new Item(firstProduct), new Item(secondProduct), new Item(thirdProduct) });
             
             var additionalPromotion = new AdditionalPromotion { Category = "fruit", Percent = 50 };
 
-            var productGroups = additionalPromotion.ApplyTo(order);
+            var discounts = additionalPromotion.ApplyTo(order);
             
-            Assert.Equal(2, productGroups.Count);
-            Assert.Equal(firstProduct, productGroups[0].Product);
-            Assert.Equal(2, productGroups[0].Quantity);
-            Assert.Equal(secondProduct, productGroups[1].Product);
-            Assert.Equal(2, productGroups[1].Quantity);   
+            Assert.Equal(2, discounts.Count);
+            Assert.Equal(order.Items[2], discounts[0].Item);
+            Assert.Equal(firstProduct.Price / 2, discounts[0].Value);
+            Assert.Equal(order.Items[3], discounts[1].Item);
+            Assert.Equal(secondProduct.Price / 2, discounts[1].Value);   
         }
     }
 }

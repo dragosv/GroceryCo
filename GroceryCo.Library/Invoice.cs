@@ -1,17 +1,26 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GroceryCo.Library
 {
     public class Invoice
     {
-        public Invoice(IList<Product> products, IList<Discount> discounts)
+        public Invoice(IList<Item> items, IList<Discount> discounts)
         {
-            Products = products;
+            Items = items;
             Discounts = discounts;
         }
         
-        public IList<Product> Products { get; private set; }
+        public IList<Item> Items { get; private set; }
         
         public IList<Discount> Discounts { get; private set; }
+
+        public double Total
+        {
+            get
+            {
+                return Items.Sum(x => x.Product.Price) - Discounts.Sum(x => x.Value);
+            }
+        }
     }
 }

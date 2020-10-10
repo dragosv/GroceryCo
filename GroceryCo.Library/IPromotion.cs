@@ -4,7 +4,6 @@ namespace GroceryCo.Library
 {
     public interface IPromotion
     {
-        IList<ProductGroup> ApplyTo(Order order);
-        double Discount(Order order);
+        IList<Discount> ApplyTo(Order order);
     }
 }

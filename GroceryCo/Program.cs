@@ -6,7 +6,20 @@ namespace GroceryCo
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            string directory = args[0];
+            string invoice;
+
+            try
+            {
+                invoice = new Application().PrintInvoice(directory);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return;
+            }
+
+            Console.WriteLine(invoice);
         }
     }
 }

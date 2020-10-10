@@ -6,7 +6,7 @@ namespace GroceryCo.Library
     {
         public IPromotion Promotion { get; set; }
         
-        public IList<ProductGroup> ProductGroups { get; set; }
+        public Item Item { get; set; }
         
         public double Value { get; set; }
     }

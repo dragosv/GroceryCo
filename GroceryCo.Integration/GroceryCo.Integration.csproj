@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+      <PackageReference Include="xunit" Version="2.4.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GroceryCo.Library\GroceryCo.Library.csproj" />
+      <ProjectReference Include="..\GroceryCo\GroceryCo.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TestData\Order.json" />
+      <Content Include="TestData\Order.json" />
+      <None Remove="TestData\Products.json" />
+      <Content Include="TestData\Products.json" />
+      <None Remove="TestData\Promotions.json" />
+      <Content Include="TestData\Promotions.json" />
+    </ItemGroup>
+
+</Project>

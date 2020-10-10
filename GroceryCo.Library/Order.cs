@@ -5,21 +5,21 @@ namespace GroceryCo.Library
 {
     public class Order
     {
-        public Order(IEnumerable<Product> products)
+        public Order(IEnumerable<Item> items)
         {
-            Products = products.ToList();
+            Items = items.ToList();
         }
-        public IList<Product> Products { get; private set; }
+        public IList<Item> Items { get; private set; }
 
-        public IList<ProductGroup> GroupedProducts
-        {
-            get
-            {
-                return Products.GroupBy(x => x)
-                    .Select(group => new ProductGroup(group.Key, group.Count()))
-                    .ToList();
-            }
-        }
+        // public IList<ProductGroup> GroupedProducts
+        // {
+        //     get
+        //     {
+        //         return Products.GroupBy(x => x)
+        //             .Select(group => new ProductGroup(group.Key, group.Count()))
+        //             .ToList();
+        //     }
+        // }
     }
 }    
 
