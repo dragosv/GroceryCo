@@ -1,15 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace GroceryCo.Library
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Order
     {
         public Order(IEnumerable<Item> items)
         {
-            Items = items.ToList();
+            this.Items = items.ToList();
         }
-        public IList<Item> Items { get; private set; }
+
+        public IList<Item> Items { get; }
 
         // public IList<ProductGroup> GroupedProducts
         // {
@@ -21,5 +22,4 @@ namespace GroceryCo.Library
         //     }
         // }
     }
-}    
-
+}

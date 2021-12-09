@@ -1,10 +1,10 @@
-﻿using System;
-
-namespace GroceryCo
+﻿namespace GroceryCo
 {
-    class Program
+    using System;
+
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             string directory = args[0];
             string invoice;

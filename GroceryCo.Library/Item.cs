@@ -4,10 +4,10 @@ namespace GroceryCo.Library
     {
         public Item(Product product)
         {
-            Product = product;
+            this.Product = product;
         }
 
-        public Item() 
+        public Item()
         {
         }
 

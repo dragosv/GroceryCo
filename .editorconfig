@@ -1,0 +1,10 @@
+[*.cs]
+dotnet_analyzer_diagnostic.severity = warning
+dotnet_diagnostic.RCS1078i.severity = warning
+dotnet_diagnostic.IDE0008.severity = suggestion
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = suggestion
+dotnet_diagnostic.RCS1078.severity=warning
+dotnet_diagnostic.CA1008.severity=warning
+dotnet_diagnostic.SA1633.severity=suggestion
+dotnet_diagnostic.RCS1078.severity=suggestion
