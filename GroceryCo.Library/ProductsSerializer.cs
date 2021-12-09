@@ -1,17 +1,17 @@
-using Newtonsoft.Json;
-
 namespace GroceryCo.Library
 {
+    using Newtonsoft.Json;
+
     public class ProductsSerializer
     {
-        public string Serialize(Product[] products)
+        public static string Serialize(Product[] products)
         {
             return JsonConvert.SerializeObject(products);
-        }  
-        
-        public Product[] Deserialize(string products)
+        }
+
+        public static Product[] Deserialize(string products)
         {
             return JsonConvert.DeserializeObject<Product[]>(products);
-        }  
+        }
     }
 }

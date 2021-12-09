@@ -1,42 +1,36 @@
-using System.IO;
-using Newtonsoft.Json;
-
 namespace GroceryCo.Library
 {
+    using System.IO;
+    using Newtonsoft.Json;
+
     public class PromotionsSerializer
     {
         private readonly JsonSerializer serializer;
 
         public PromotionsSerializer(Product[] products)
         {
-            serializer = new JsonSerializer();
-            serializer.Converters.Add(new PromotionConverter(products));
-            serializer.Converters.Add(new ProductConverter(products));
-            serializer.NullValueHandling = NullValueHandling.Ignore;
+            this.serializer = new JsonSerializer();
+            this.serializer.Converters.Add(new PromotionConverter(products));
+            this.serializer.Converters.Add(new ProductConverter(products));
+            this.serializer.NullValueHandling = NullValueHandling.Ignore;
         }
-        
+
         public string Serialize(IPromotion[] promotions)
         {
-            using (var sw = new StringWriter())
+            using var sw = new StringWriter();
+            using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                using (JsonWriter writer = new JsonTextWriter(sw))
-                {
-                    serializer.Serialize(writer, promotions);
-                }
-
-                return sw.ToString();
+                this.serializer.Serialize(writer, promotions);
             }
+
+            return sw.ToString();
         }
 
         public IPromotion[] Deserialize(string promotions)
         {
-            using (var sr = new StringReader(promotions))
-            {
-                using (JsonReader reader = new JsonTextReader(sr))
-                {
-                    return serializer.Deserialize<IPromotion[]>(reader);
-                }
-            }
-        } 
+            using var sr = new StringReader(promotions);
+            using JsonReader reader = new JsonTextReader(sr);
+            return this.serializer.Deserialize<IPromotion[]>(reader);
+        }
     }
 }
